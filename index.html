@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Score Tracker</title>
+    <style>
+        h2 {
+            display: inline;
+        }
+        .runs button {
+            height: 5rem;
+            width: 4rem;
+            margin-left: 1rem;
+            margin-bottom: 1rem;
+        }
+        .space {
+            margin-left: 2rem;
+        }
+        .hidden {
+            display: none;
+        }
+        @media (max-width: 600px) {
+            .runs button {
+                height: 3rem;
+                width: 3rem;
+                margin-left: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="oversInput">
+        <h1>No of Overs:</h1>
+        <input type="number" id="overs">
+        <button id="submitOvers">Submit</button>
+    </div>
+    <br>
+    <h2>Total Overs=</h2>
+    <h2 id="totalOvers">--</h2>
+    <h1><u>1st INNINGS</u> </h1>
+    <h2 id="runs1">0</h2>
+    <h2>Runs of </h2>
+    <h2 id="balls1">0</h2>
+    <h2>balls</h2>
+    <br><br>
+    <h2>Wickets:</h2>
+    <h2 id="countwkts1">0</h2>
+    <h2 class="space">CRR:</h2>
+    <h2 id="crr1">0</h2>
+    <h1><u>2nd INNINGS</u> </h1>
+    <h2 id="runs2">0</h2>
+    <h2>Runs of</h2>
+    <h2 id="balls2">0</h2>
+    <h2>balls</h2>
+    <br><br>
+    <h2>Wickets:</h2>
+    <h2 id="countwkts2">0</h2>
+    <h2 class="space">CRR:</h2>
+    <h2 id="crr2">0</h2>
+    <h2 class="space">RRR:</h2>
+    <h2 id="rrr">0</h2>
+    <br><br>
+    <h2 id="runsreq">0</h2>
+    <h2>Runs required of</h2>
+    <h2 id="ballsreq">0</h2>
+    <h2>balls</h2>
+    <br><br>
+    <div class="runs">
+        <button id="0">0</button>
+        <button id="1">1</button>
+        <button id="2">2</button>
+        <button id="3">3</button>
+        <button id="4">4</button>
+        <button id="5">5</button>
+        <button id="6">6</button>
+        <button id="wd">WD</button>
+        <button id="wkt">OUT</button>
+        <button id="m5out">-5+OUT</button>
+    </div>
+    <script>
+        let sum = 0, balls = 0, totalOvers = 0, wkt = 0, inn = 1, inn1runs = 0;
+
+        const btn0 = document.getElementById("0");
+        const btn1 = document.getElementById("1");
+        const btn2 = document.getElementById("2");
+        const btn3 = document.getElementById("3");
+        const btn4 = document.getElementById("4");
+        const btn5 = document.getElementById("5");
+        const btn6 = document.getElementById("6");
+        const btnWd = document.getElementById("wd");
+        const btnWkt = document.getElementById("wkt");
+        const m5out = document.getElementById("m5out");
+
+        const runs1 = document.getElementById("runs1");
+        const balls1 = document.getElementById("balls1");
+        const countwkts1 = document.getElementById("countwkts1");
+        const crr1 = document.getElementById("crr1");
+
+        const runs2 = document.getElementById("runs2");
+        const balls2 = document.getElementById("balls2");
+        const countwkts2 = document.getElementById("countwkts2");
+        const crr2 = document.getElementById("crr2");
+        const runsreq = document.getElementById("runsreq");
+        const ballsreq = document.getElementById("ballsreq");
+        const rrr = document.getElementById("rrr");
+
+        const totalOversDisplay = document.getElementById("totalOvers");
+        const submitOversButton = document.getElementById("submitOvers");
+        const oversInput = document.getElementById("overs");
+        const oversInputDiv = document.getElementById("oversInput");
+
+        submitOversButton.addEventListener("click", () => {
+            totalOvers = parseInt(oversInput.value);
+            totalOversDisplay.textContent = totalOvers;
+            oversInputDiv.classList.add("hidden");
+        });
+
+        btn0.addEventListener("click", () => updateScore(0));
+        btn1.addEventListener("click", () => updateScore(1));
+        btn2.addEventListener("click", () => updateScore(2));
+        btn3.addEventListener("click", () => updateScore(3));
+        btn4.addEventListener("click", () => updateScore(4));
+        btn5.addEventListener("click", () => updateScore(5));
+        btn6.addEventListener("click", () => updateScore(6));
+        btnWd.addEventListener("click", () => updateScore("wd"));
+        btnWkt.addEventListener("click", () => updateScore("wkt"));
+        m5out.addEventListener("click", () => updateScore("m5out"));
+
+        function updateScore(num) {
+            if (num == "wd") {
+                sum++;
+            } else if (num == "wkt") {
+                wkt++;
+                balls++;
+            }
+            else if(num=="m5out")
+            {
+                wkt++;
+                sum-=5;
+            }
+             else {
+                sum += num;
+                balls++;
+            }
+
+            if (inn == 1) {
+                countwkts1.textContent = wkt;
+                runs1.textContent = sum;
+                balls1.textContent = balls;
+                crr1.textContent = ((sum / balls)*6).toFixed(2);
+            } else {
+                countwkts2.textContent = wkt;
+                runs2.textContent = sum;
+                balls2.textContent = balls;
+                crr2.textContent = ((sum / balls)*6).toFixed(2);
+                runsreq.textContent = Math.max(0, inn1runs - sum + 1);
+                ballsreq.textContent = 6 * totalOvers - balls;
+                rrr.textContent = Math.max(0, (((inn1runs - sum) / (6 * totalOvers - balls))*6).toFixed(2));
+
+                if (sum == inn1runs && totalOvers * 6 == balls) {
+                    alert("Super Over, Match Drawn");
+                } else if (sum > inn1runs) {
+                    alert("Team 2 won the match");
+                } else if (totalOvers * 6 == balls) {
+                    alert("Team 1 won the match");
+                }
+            }
+
+            if (totalOvers * 6 == balls) {
+                inn1runs = sum;
+                inn = 2;
+                sum = 0;
+                balls = 0;
+                wkt = 0;
+                alert("1st innings completed, 2nd innings is going to start");
+                runsreq.textContent = Math.max(0, inn1runs - sum + 1);
+                ballsreq.textContent = 6 * totalOvers - balls;
+                rrr.textContent = Math.max(0, (((inn1runs - sum) / (6 * totalOvers - balls))*6).toFixed(2));
+            }
+        }
+    </script>
+</body>
+</html>
